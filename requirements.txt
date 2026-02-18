@@ -6,3 +6,4 @@ numpy
 imagehash
 requests
 pyobjc-framework-Quartz
+zxing-cpp

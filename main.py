@@ -5,7 +5,7 @@ import signal
 import sys
 import time
 
-from capture import capture_scrcpy
+from capture import capture_scrcpy, capture_adb
 from detection import ChangeDetector
 from decoder import decode_qr_fast
 from output import fire_outputs
@@ -60,6 +60,9 @@ def main():
 
     title = config.get("scrcpy_window_title", "scrcpy")
     region = config["chat_region"]
+    adb_serial = config.get("adb_serial", "")
+    phone_w = config.get("phone_screen_width", 720)
+    phone_h = config.get("phone_screen_height", 1600)
     threshold_pct = config.get("change_threshold_pct", 10.0)
 
     FAST_INTERVAL = 0.05   # 50ms when watching/active
@@ -101,8 +104,24 @@ def main():
 
         if stable:
             watching = False
-            # Frame settled — decode the clear frame
+            # Frame settled — try scrcpy frame first, then ADB lossless
             decoded_list = decode_qr_fast(chat_frame)
+
+            if not decoded_list:
+                # Fallback: lossless ADB screencap for better QR quality
+                adb_frame = capture_adb(serial=adb_serial)
+                if adb_frame is not None:
+                    # Crop same chat region, scaled to phone resolution
+                    sx = phone_w / (region["w"] + region["x"] * 2)
+                    sy = phone_h / (region["h"] + region["y"] * 2)
+                    ax = int(region["x"] * sx)
+                    ay = int(region["y"] * sy)
+                    aw = int(region["w"] * sx)
+                    ah = int(region["h"] * sy)
+                    ah = min(ah, adb_frame.shape[0] - ay)
+                    aw = min(aw, adb_frame.shape[1] - ax)
+                    adb_chat = adb_frame[ay:ay+ah, ax:ax+aw]
+                    decoded_list = decode_qr_fast(adb_chat)
 
             for decoded in decoded_list:
                 if decoded in seen_content:
