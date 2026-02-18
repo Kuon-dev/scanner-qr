@@ -1,0 +1,8 @@
+mss
+Pillow
+opencv-python
+pyzbar
+numpy
+imagehash
+requests
+pyobjc-framework-Quartz

@@ -1,0 +1,20 @@
+{
+  "discord_webhook_url": "",
+  "chat_region": null,
+  "scrcpy_window_title": "scrcpy",
+  "capture_interval_ms": 200,
+  "idle_interval_ms": 1000,
+  "idle_timeout_s": 30,
+  "change_threshold_pct": 10.0,
+  "min_image_width": 80,
+  "min_image_height": 80,
+  "max_dedup_entries": 500,
+  "dedup_ttl_s": 3600,
+  "adb_serial": "",
+  "adb_enabled": true,
+  "adb_long_press_ms": 1000,
+  "adb_identify_qr_offset_y": 120,
+  "phone_screen_width": 720,
+  "phone_screen_height": 1600,
+  "log_file": "scanner.log.jsonl"
+}
